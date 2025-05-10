@@ -24,7 +24,7 @@ let classifier = ConfigClassifier::from_csv("data/labeled/ci_cd.csv")?;
 
 // 3. Classify
 let result: Value = match classifier.classify(&file_name, &mime_type) {
-    Some((file_name, _, is_ci_cd)) => {
+    Some(confignet::ClassifiedResult { file_name, is_ci_cd, .. }) => {
         let path = if Path::new(&file_path).parent().unwrap_or_else(|| Path::new("")) == Path::new("") {
             format!("./{}", file_name)
         } else {

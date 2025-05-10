@@ -9,6 +9,13 @@ pub struct ConfigRecord {
     pub config_type: String,
 }
 
+#[derive(Debug, Clone)]
+pub struct ClassifiedResult {
+    pub file_name: String,
+    pub file_path: String,
+    pub is_ci_cd: bool,
+}
+
 pub struct ConfigClassifier {
     records: Vec<ConfigRecord>,
 }
@@ -27,21 +34,42 @@ impl ConfigClassifier {
         Ok(Self { records })
     }
 
-    pub fn classify(&self, file_path: &str, mime_label: &str) -> Option<(String, String, bool)> {
-        // Extract the file name from the file path
-        let file_name = Path::new(file_path).file_name()
-            .and_then(|name| name.to_str())
-            .unwrap_or_default();
+    pub fn classify<P: AsRef<Path>>(
+        &self,
+        file_path: P,
+        mime_label: &str,
+    ) -> Option<ClassifiedResult> {
+        let file_path = file_path.as_ref();
+        let file_name = file_path.file_name()?.to_string_lossy().to_string();
 
-        // Find the config record based on the file name and mime label
         self.records
             .iter()
             .filter(|r| r.mime_label == mime_label)
-            .min_by_key(|r| levenshtein(&r.file_name, file_name))
+            .min_by_key(|r| levenshtein(&r.file_name, &file_name))
             .map(|r| {
+                let normalized_path = normalize_path(file_path);
                 let is_ci_cd = r.config_type != "non_config";
-                (r.file_name.clone(), file_path.to_string(), is_ci_cd)
+                ClassifiedResult {
+                    file_name: r.file_name.clone(),
+                    file_path: normalized_path,
+                    is_ci_cd,
+                }
             })
+    }
+}
+
+fn normalize_path(path: &Path) -> String {
+    let cwd = std::env::current_dir().unwrap_or_default();
+    match path.strip_prefix(&cwd) {
+        Ok(p) => {
+            let path_str = p.to_string_lossy();
+            if path_str.contains('/') {
+                format!("./{}", path_str)
+            } else {
+                format!("./{}", path_str)
+            }
+        }
+        Err(_) => path.to_string_lossy().to_string(),
     }
 }
 
