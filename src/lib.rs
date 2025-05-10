@@ -27,17 +27,20 @@ impl ConfigClassifier {
         Ok(Self { records })
     }
 
-    pub fn classify(&self, file_name: &str, mime_label: &str, project_root: &str) -> Option<(String, String, bool)> {
+    pub fn classify(&self, file_path: &str, mime_label: &str) -> Option<(String, String, bool)> {
+        // Extract the file name from the file path
+        let file_name = Path::new(file_path).file_name()
+            .and_then(|name| name.to_str())
+            .unwrap_or_default();
+
         // Find the config record based on the file name and mime label
         self.records
             .iter()
             .filter(|r| r.mime_label == mime_label)
             .min_by_key(|r| levenshtein(&r.file_name, file_name))
             .map(|r| {
-                // Dynamically construct file path from project root and file_name
-                let file_path = format!("{}/{}", project_root, r.file_name);
                 let is_ci_cd = r.config_type != "non_config";
-                (r.file_name.clone(), file_path, is_ci_cd)
+                (r.file_name.clone(), file_path.to_string(), is_ci_cd)
             })
     }
 }

@@ -18,8 +18,8 @@ config/dev.toml,toml,env_config
 config/test.toml,toml,env_config
 config/prod.toml,toml,env_config
 build.rs,rust,build_script
-src/main.rs,rust,non_config
-src/lib.rs,rust,non_config
+main.rs,rust,non_config
+lib.rs,rust,non_config
 README.md,markdown,non_config
 LICENSE,plain_text,non_config
 target/debug/build-script-build,plain_text,non_config
