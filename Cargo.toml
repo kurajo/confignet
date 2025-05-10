@@ -2,10 +2,12 @@
 name = "confignet"
 version = "0.1.0"
 edition = "2024"
-authors = ["Tanvi Pooranmal Meena tanvipm19@gmail.com"]
+authors = ["Tanvi Pooranmal Meena <tanvipm19@gmail.com>"]
 description = "Classifier to detect CI/CD config files based on file name and MIME label."
 license = "MIT OR Apache-2.0"
 repository = "https://github.com/kurajo/confignet"
+readme = "README.md"
+rust-version = "1.85"
 
 [dependencies]
 serde = { version = "1.0", features = ["derive"] }
