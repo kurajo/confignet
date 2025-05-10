@@ -23,5 +23,5 @@ tempfile = "3.10"
 assert_cmd = "2.0"
 
 [[bin]]
-name = "confignet"
+name = "cnet"
 path = "src/main.rs"

@@ -6,7 +6,7 @@ fn main() -> Result<()> {
     // 1. Get file name, mime type, and project root from args
     let args: Vec<String> = env::args().collect();
     if args.len() != 4 {
-        eprintln!("Usage: confignet <file_name> <mime_type> <project_root>");
+        eprintln!("Usage: cnet <file_name> <mime_type> <project_root>");
         process::exit(1);
     }
     
@@ -20,17 +20,19 @@ fn main() -> Result<()> {
     // 3. Classify and output structured result
     match classifier.classify(&file_name, &mime_type, &project_root) {
         Some((file_name, file_path, is_ci_cd)) => {
-            if is_ci_cd {
-                // Output structured result for CI/CD files
-                println!("{{\"file_name\": \"{}\", \"file_path\": \"{}\", \"is_ci_cd\": true}}", file_name, file_path);
-            } else {
-                println!("{{\"file_name\": \"{}\", \"file_path\": \"{}\", \"is_ci_cd\": false}}", file_name, file_path);
-            }
+            println!("{{");
+            println!("  \"file_name\": \"{}\",", file_name);
+            println!("  \"file_path\": \"{}\",", file_path);
+            println!("  \"is_ci_cd\": {}", is_ci_cd);
+            println!("}}");
         },
         None => {
-            println!("{{\"file_name\": \"{}\", \"is_ci_cd\": false}}", file_name);
+            println!("{{");
+            println!("  \"file_name\": \"{}\",", file_name);
+            println!("  \"is_ci_cd\": false");
+            println!("}}");
         },
-    }
+    }    
 
     Ok(())
 }
