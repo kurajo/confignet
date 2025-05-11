@@ -1,6 +1,6 @@
 [package]
 name = "confignet"
-version = "0.0.2"
+version = "0.0.3"
 edition = "2024"
 authors = ["Tanvi Pooranmal Meena <tanvipm19@gmail.com>"]
 description = "Classifier to detect CI/CD config files based on file name and MIME label."

@@ -34,6 +34,18 @@ impl ConfigClassifier {
         Ok(Self { records })
     }
 
+    pub fn from_csv_str(csv_data: &str) -> Result<Self> {
+        let mut rdr = csv::Reader::from_reader(csv_data.as_bytes());
+        let mut records = Vec::new();
+
+        for result in rdr.deserialize() {
+            let record: ConfigRecord = result?;
+            records.push(record);
+        }
+
+        Ok(Self { records })
+    }
+
     pub fn classify<P: AsRef<Path>>(
         &self,
         file_path: P,
